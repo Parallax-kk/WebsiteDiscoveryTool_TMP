@@ -86,7 +86,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(197, 24);
+            this.menuStrip.Size = new System.Drawing.Size(75, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -147,12 +147,13 @@
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.editToolStripMenuItem.Text = "編集(&E)";
+            this.editToolStripMenuItem.Visible = false;
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.undoToolStripMenuItem.Text = "元に戻す(&U)";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
@@ -162,6 +163,7 @@
             this.helpToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
             this.helpToolStripMenuItem.Text = "ヘルプ(&H)";
+            this.helpToolStripMenuItem.Visible = false;
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // tabControl
@@ -265,12 +267,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.levelTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.levelTextBox.Font = new System.Drawing.Font("MS UI Gothic", 15F);
+            this.levelTextBox.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.levelTextBox.Location = new System.Drawing.Point(130, 85);
             this.levelTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.levelTextBox.Name = "levelTextBox";
             this.levelTextBox.Size = new System.Drawing.Size(451, 20);
             this.levelTextBox.TabIndex = 11;
             this.levelTextBox.TextChanged += new System.EventHandler(this.levelTextBox_TextChanged);
+            this.levelTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.levelTextBox_KeyDown);
             // 
             // indexTextBox
             // 
@@ -279,12 +283,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.indexTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.indexTextBox.Font = new System.Drawing.Font("MS UI Gothic", 15F);
+            this.indexTextBox.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.indexTextBox.Location = new System.Drawing.Point(130, 64);
             this.indexTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.indexTextBox.Name = "indexTextBox";
             this.indexTextBox.Size = new System.Drawing.Size(451, 20);
             this.indexTextBox.TabIndex = 10;
             this.indexTextBox.TextChanged += new System.EventHandler(this.indexTextBox_TextChanged);
+            this.indexTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.indexTextBox_KeyDown);
             // 
             // searchWordTextBox
             // 
@@ -418,6 +424,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.urlTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.urlTextBox.Font = new System.Drawing.Font("MS UI Gothic", 15F);
+            this.urlTextBox.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.urlTextBox.Location = new System.Drawing.Point(130, 22);
             this.urlTextBox.Margin = new System.Windows.Forms.Padding(0);
             this.urlTextBox.Name = "urlTextBox";

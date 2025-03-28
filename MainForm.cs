@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Security.AccessControl;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -26,12 +28,13 @@ namespace WebsiteDiscoveryTool
         private readonly int DEFAULT_MEMO_HEIGHT = 244;
 
         private PageData m_CurrentPageData = new PageData();
-        public int m_SelectImageIndex = 0;
+        private int m_SelectImageIndex = 0;
+        private string m_CurrentSaveFilePath = "";
+
         public MainForm()
         {
             InitializeComponent();
         }
-
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -55,6 +58,7 @@ namespace WebsiteDiscoveryTool
             PageData newPageData = new PageData
             {
                 GUID = Guid.NewGuid(),
+                Parent = parentData == null ? Guid.Empty : parentData.GUID,
                 PageName = name,
                 URL = "",
                 SearchWord = "",
@@ -110,41 +114,67 @@ namespace WebsiteDiscoveryTool
             treeView.Nodes.Remove(removedNode);
         }
 
-        private string SerializeTreeView()
-        {
-            List<SerializableTreeNode> serializableNodes = new List<SerializableTreeNode>();
-            foreach (TreeNode node in treeView.Nodes)
-            {
-                serializableNodes.Add(new SerializableTreeNode(node));
-            }
-            return JsonConvert.SerializeObject(serializableNodes, Formatting.Indented);
-        }
-
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             treeView.Nodes.Clear();
             AddNewPage("トップページ", null);
+            m_CurrentSaveFilePath = "";
+        }
+
+        private void SaveNewFile()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+
+            sfd.FileName = "新しい謎.json";
+            sfd.Filter = "JSONファイル(*.json)|*.json";
+            sfd.Title = "保存先のファイルを選択してください";
+            sfd.RestoreDirectory = true;
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                m_CurrentSaveFilePath = sfd.FileName;
+                //string json = SerializeTreeView();
+                //File.WriteAllText(sfd.FileName, json);
+            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "JSONファイル(*.json)|*.json";
+            ofd.Title = "JSONファイルを選択してください";
+            ofd.RestoreDirectory = true;
+            ofd.Multiselect = false;
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                using (var fs = new FileStream(ofd.FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                {
+                    string filePath = ofd.FileName;
+                    string json = File.ReadAllText(filePath);
+                }
+            }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string json = SerializeTreeView();
-            System.IO.File.WriteAllText("treeview.json", json);
+            SaveNewFile();
         }
 
         private void overrideToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (string.IsNullOrEmpty(m_CurrentSaveFilePath))
+            {
+                SaveNewFile();
+            }
+            else
+            {
+                //string json = SerializeTreeView();
+                //File.WriteAllText(m_CurrentSaveFilePath, json);
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -348,20 +378,50 @@ namespace WebsiteDiscoveryTool
             m_CurrentPageData.URL = urlTextBox.Text;
         }
 
+        private void CheckNumerics(KeyEventArgs e)
+        {
+            if (!((e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9) ||
+                  (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9) ||
+                  e.KeyCode == Keys.Back ||
+                  e.KeyCode == Keys.Delete ||
+                  e.KeyCode == Keys.Left ||
+                  e.KeyCode == Keys.Right))
+            {
+                e.SuppressKeyPress = true;
+            }
+        }
+
         private void searchWordTextBox_TextChanged(object sender, EventArgs e)
         {
             m_CurrentPageData.SearchWord = searchWordTextBox.Text;
             treeView.SelectedNode.ToolTipText = m_CurrentPageData.SearchWord;
         }
+        private void indexTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            CheckNumerics(e);
+        }
 
         private void indexTextBox_TextChanged(object sender, EventArgs e)
         {
-            m_CurrentPageData.Index = int.Parse(indexTextBox.Text);
+            int index = 0;
+            if (int.TryParse(indexTextBox.Text, out index))
+                m_CurrentPageData.Index = index;
+            else
+                m_CurrentPageData.Index = 0;
+        }
+
+        private void levelTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            CheckNumerics(e);
         }
 
         private void levelTextBox_TextChanged(object sender, EventArgs e)
         {
-            m_CurrentPageData.Level = int.Parse(levelTextBox.Text);
+            int level = 0;
+            if (int.TryParse(indexTextBox.Text, out level))
+                m_CurrentPageData.Level = level;
+            else
+                m_CurrentPageData.Level = 0;
         }
 
         private void memoTextBox_TextChanged(object sender, EventArgs e)
